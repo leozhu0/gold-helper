@@ -1,6 +1,6 @@
-let courses = document.querySelectorAll('.courseSearchItem > .row.session');
-for (var i = 0; i < courses.length; i++) {
-    let containerEle = courses[i].parentElement;
+let course = document.querySelectorAll('.courseSearchItem > .row.session');
+for (var i = 0; i < course.length; i++) {
+    let containerEle = course[i].parentElement;
     containerEle.style.position = "relative";
     let ratingEle = document.createElement("div");
     ratingEle.style.position = "absolute";
