@@ -54,7 +54,7 @@ function convertToMilitaryTime(period) {
 
 let courses = document.getElementsByClassName('row session');
 
-for (var i = 0; i < courses.length; i++) {
+for (let i = 0; i < courses.length; i++) {
     let lectureInfo = courses[i].getElementsByClassName('col-lg-9 col-md-9 col-sm-9 col-xs-12');
     
     if (!(lectureInfo.length > 0)) continue;
@@ -112,12 +112,19 @@ for (var i = 0; i < courses.length; i++) {
 
         var isConflict;
 
+        let allSections = courses[i].getElementsByClassName('row susbSessionItem');
+        // let lectureButtons = courses[i].getElementsByClassName('col-lg-3 col-md-3 col-sm-3 col-xs-12');
+
         function changeBackground(conflict) {
             if (conflict) {
-                //let lectureButtons = courses[i].getElementsByClassName('col-lg-9 col-md-9 col-sm-9 col-xs-12');
+                // lectureInfo[0].style.backgroundColor = "orange";
+                // lectureButtons[0].style.backgroundColor = "orange";
 
-                lectureInfo[0].style.backgroundColor = "orange";
-                //lectureButtons[0].style.backgroundColor = "orange";
+                courses[i].style.backgroundColor = 'orange';
+
+                for (var j = 0; j < allSections.length; j++) {
+                    allSections[j].style.backgroundColor = 'orange';
+                }
             }
         }
 
@@ -131,7 +138,6 @@ for (var i = 0; i < courses.length; i++) {
                 if (isConflict) break;
             }
         });
-
     }
 }
 
