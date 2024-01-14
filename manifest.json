@@ -29,6 +29,12 @@
           "https://my.sa.ucsb.edu/gold/ResultsFindCourses.aspx"
         ],
         "js": ["scripts/highlight.js"]
+      },
+      {
+        "matches": [
+          "https://my.sa.ucsb.edu/gold/ResultsFindCourses.aspx"
+        ],
+        "js": ["scripts/rating.js"]
       }
     ]
   }
