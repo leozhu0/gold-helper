@@ -1,20 +1,40 @@
-// fetch(chrome.runtime.getURL('schedule.json'))
-//   .then(response => response.json())
-//   .then(data => {
-//     // Step 2 & 3: Parse and modify the data
-//     // Assuming 'data' is an object and you want to modify a field called 'eventDate'
-//     data.eventDate = '2024-01-01';
+fetch(chrome.runtime.getURL('json/schedule.json'))
+  .then(response => response.json())
+  .then(data => {
 
-//     // Step 4: Serialize the updated data
-//     const updatedJson = JSON.stringify(data);
+    for (let key in data) {
+        if (data.hasOwnProperty(key)) {
+            data[key] = [];
+        }
+    }
+    
+    const scheduleContainer = document.getElementById('div_Schedule_Container');
+    const sessionRows = scheduleContainer.querySelectorAll('.row.session');
 
-//     // Step 5: Store the updated data in Chrome Storage
-//     chrome.storage.local.set({schedule: updatedJson}, () => {
-//       console.log('Schedule is updated');
-//     });
-//   })
-//   .catch(error => console.error('Error:', error));
+    for (var i = 0; i < sessionRows.length; i++) {
+        const dayText = sessionRows[i].querySelector('.col-lg-days.col-lg-push-instructor.col-md-push-instructor.col-lg-push-0.col-sm-days.col-sm-push-3.col-xs-2').textContent.trim().split("Days");
+        const timeText = sessionRows[i].querySelector('.col-lg-time.col-lg-push-instructor.col-md-push-instructor.col-md-time.col-sm-4.col-sm-push-3.col-xs-5').textContent.trim().split("Time");
 
+        let scheduleDays = dayText[1].trim().split(" ");
+        let scheduleTimePeriod = convertToMilitaryTime(timeText[1].trim()).split("-");
+
+        console.log(scheduleDays);
+        console.log(scheduleTimePeriod);
+
+        for (var j = 0; j < scheduleDays.length; j++) {
+            data[scheduleDays[j]].push({"start": scheduleTimePeriod[0], "end": scheduleTimePeriod[1]});
+        }
+    }
+
+    // Step 4: Serialize the updated data
+    const updatedJson = JSON.stringify(data);
+
+    // Step 5: Store the updated data in Chrome Storage
+    chrome.storage.local.set({schedule: updatedJson}, () => {
+      console.log('Schedule is updated');
+    });
+  })
+  .catch(error => console.error('Error:', error));
 
 //var scheduledCourses = document.getElementsByClassName('scheduleItem');
 
@@ -45,19 +65,50 @@ function convertToMilitaryTime(period) {
     return times.map(time => toMilitary(time.trim())).join('-');
 }
 
-const scheduleContainer = document.getElementById('div_Schedule_Container');
-const sessionRows = scheduleContainer.querySelectorAll('.row.session');
+// const scheduleContainer = document.getElementById('div_Schedule_Container');
+// const sessionRows = scheduleContainer.querySelectorAll('.row.session');
 
-for (var i = 0; i < sessionRows.length; i++) {
-    const dayText = sessionRows[i].querySelector('.col-lg-days.col-lg-push-instructor.col-md-push-instructor.col-lg-push-0.col-sm-days.col-sm-push-3.col-xs-2').textContent.trim().split("Days");
-    const timeText = sessionRows[i].querySelector('.col-lg-time.col-lg-push-instructor.col-md-push-instructor.col-md-time.col-sm-4.col-sm-push-3.col-xs-5').textContent.trim().split("Time");
+// for (var i = 0; i < sessionRows.length; i++) {
+//     const dayText = sessionRows[i].querySelector('.col-lg-days.col-lg-push-instructor.col-md-push-instructor.col-lg-push-0.col-sm-days.col-sm-push-3.col-xs-2').textContent.trim().split("Days");
+//     const timeText = sessionRows[i].querySelector('.col-lg-time.col-lg-push-instructor.col-md-push-instructor.col-md-time.col-sm-4.col-sm-push-3.col-xs-5').textContent.trim().split("Time");
 
-    let days = dayText[1].trim().split(" ");
-    let timePeriod = convertToMilitaryTime(timeText[1].trim());
+//     let days = dayText[1].trim().split(" ");
+//     let timePeriod = convertToMilitaryTime(timeText[1].trim());
 
-    console.log(days);
-    console.log(timePeriod);
-}
+//     console.log(days);
+//     console.log(timePeriod);
+// }
+
+// fetch(chrome.runtime.getURL('schedule.json'))
+//   .then(response => response.json())
+//   .then(data => {
+    
+//     data.eventDate = ;
+
+//     // Step 4: Serialize the updated data
+//     const updatedJson = JSON.stringify(data);
+
+//     // Step 5: Store the updated data in Chrome Storage
+//     chrome.storage.local.set({schedule: updatedJson}, () => {
+//       console.log('Schedule is updated');
+//     });
+//   })
+//   .catch(error => console.error('Error:', error));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // sessionRows.forEach(row => {
 //     const dayText = row.querySelector('.col-lg-days.col-lg-push-instructor.col-md-push-instructor.col-lg-push-0.col-sm-days.col-sm-push-3.col-xs-2').textContent.trim();

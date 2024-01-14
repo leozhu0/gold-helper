@@ -1,9 +1,9 @@
-function loadSchedule() {
-    return fetch(chrome.runtime.getURL('json/schedule.json'))
-        .then(response => response.json())
-        .then(data => data)
-        .catch(error => console.error('Error loading schedule:', error));
-}
+// function loadSchedule() {
+//     return fetch(chrome.runtime.getURL('json/schedule.json'))
+//         .then(response => response.json())
+//         .then(data => data)
+//         .catch(error => console.error('Error loading schedule:', error));
+// }
 
 function isTimeOverlapping(newPeriod, existingPeriods) {
     const newStart = new Date('1970-01-01T' + newPeriod.start).getTime();
@@ -128,10 +128,24 @@ for (let i = 0; i < courses.length; i++) {
             }
         }
 
-        loadSchedule().then(schedule => {
+        // loadSchedule().then(schedule => {
+        //     for (var j = 0; j < dayArray.length; j++) {
+        //         const newEntry = {"day": dayArray[j], "start": timeArray[0], "end": timeArray[1]};
+        //         isConflict = isTimeOverlapping(newEntry, schedule[newEntry.day]);
+        //         console.log("conflict: " + isConflict);
+
+        //         changeBackground(isConflict);
+        //         if (isConflict) break;
+        //     }
+        // });
+
+        chrome.storage.local.get('schedule', (result) => {
+            const scheduleData = JSON.parse(result.schedule);
+            console.log('Retrieved schedule:', scheduleData);
+            
             for (var j = 0; j < dayArray.length; j++) {
                 const newEntry = {"day": dayArray[j], "start": timeArray[0], "end": timeArray[1]};
-                isConflict = isTimeOverlapping(newEntry, schedule[newEntry.day]);
+                isConflict = isTimeOverlapping(newEntry, scheduleData[newEntry.day]);
                 console.log("conflict: " + isConflict);
 
                 changeBackground(isConflict);
