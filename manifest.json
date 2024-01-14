@@ -7,13 +7,28 @@
       "default_popup": "popup/popup.html",
       "default_icon": "images/temp_image.png"
     },
+    "permissions": [
+      "activeTab",
+      "scripting"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["json/schedule.json"],
+        "matches": ["<all_urls>"]
+      }
+    ],
     "content_scripts": [
       {
-        "js": ["scripts/content.js"],
         "matches": [
-          "https://developer.chrome.com/docs/extensions/*",
-          "https://developer.chrome.com/docs/webstore/*"
-        ]
+          "https://my.sa.ucsb.edu/gold/StudentSchedule.aspx"
+        ],
+        "js": ["scripts/schedule.js"]
+      },
+      {
+        "matches": [
+          "https://my.sa.ucsb.edu/gold/ResultsFindCourses.aspx"
+        ],
+        "js": ["scripts/highlight.js"]
       }
     ]
   }
