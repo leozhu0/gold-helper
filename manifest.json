@@ -29,7 +29,7 @@
         "matches": [
           "https://my.sa.ucsb.edu/gold/ResultsFindCourses.aspx"
         ],
-        "js": ["scripts/highlight.js"]
+        "js": ["scripts/highlight.js", "scripts/rating.js"]
       }
     ]
   }
