@@ -9,6 +9,8 @@ function isTimeOverlapping(newPeriod, existingPeriods) {
     const newStart = new Date('1970-01-01T' + newPeriod.start).getTime();
     const newEnd = new Date('1970-01-01T' + newPeriod.end).getTime();
 
+    //console.log(existingPeriods);
+
     for (const period of existingPeriods) {
         const start = new Date('1970-01-01T' + period.start).getTime();
         const end = new Date('1970-01-01T' + period.end).getTime();
@@ -20,10 +22,40 @@ function isTimeOverlapping(newPeriod, existingPeriods) {
     return false; // No overlap
 }
 
-var courses = document.getElementsByClassName('row session');
+function convertToMilitaryTime(period) {
+    // Split the period into two times
+    let times = period.split('-');
 
-for (var i = 0; i < courses.length; i++) {
-    var lectureInfo = courses[i].getElementsByClassName('col-lg-9 col-md-9 col-sm-9 col-xs-12');
+    // Function to convert each time to military format
+    function toMilitary(time) {
+        let [hours, minutesPart] = time.split(':');
+        let [minutes, meridian] = minutesPart.split(' ');
+
+        // Convert hours to 24-hour format if necessary
+        hours = parseInt(hours);
+        if (meridian === 'PM' && hours !== 12) {
+            hours += 12;
+        } else if (meridian === 'AM' && hours === 12) {
+            hours = 0;
+        }
+
+        // Format hours to ensure two digits
+        hours = ('0' + hours).slice(-2);
+
+        return `${hours}:${minutes}`;
+    }
+
+    // Convert and return both times in military format
+    return times.map(time => toMilitary(time.trim())).join('-');
+}
+
+// _________________________________________________________
+// MAIN STARTS HERE
+
+let courses = document.getElementsByClassName('row session');
+
+for (let i = 0; i < courses.length; i++) {
+    let lectureInfo = courses[i].getElementsByClassName('col-lg-9 col-md-9 col-sm-9 col-xs-12');
     
     if (!(lectureInfo.length > 0)) continue;
 
@@ -39,39 +71,72 @@ for (var i = 0; i < courses.length; i++) {
     }
 
     if (courseStatus === 'Full' || courseStatus === 'Closed' || courseStatus === 'Cancel') {
-        courses[i].style.backgroundColor = 'red';
+        courses[i].style.backgroundColor = 'gray';
+        var allSections = courses[i].getElementsByClassName('row susbSessionItem');
+
+        for (var j = 0; j < allSections.length; j++) {
+            allSections[j].style.backgroundColor = 'gray';
+        }
     } 
-    
+
     else {
         var days = lectureInfo[0].getElementsByClassName('col-lg-search-days col-sm-push-1 col-md-days col-sm-days col-xs-2');
         var time = lectureInfo[0].getElementsByClassName('col-lg-search-time col-sm-push-1 col-md-time col-sm-time col-xs-5');
 
-        var dayLetter;
+        var dayLetters;
         var dayChildren = days[0].childNodes;
 
         for (var j = 0; j < dayChildren.length; j++) {
             if (dayChildren[j].nodeType === Node.TEXT_NODE && dayChildren[j].textContent.trim() !== '') {
-                dayLetter = dayChildren[j].textContent.trim();
-                console.log(dayLetter);
+                dayLetters = dayChildren[j].textContent.trim();
+                console.log(dayLetters);
             }
         }
 
-        var timeLetter;
+        if (dayLetters == "T.B.A.") continue;
+
+        var timePeriod;
         var timeChildren = time[0].childNodes;
 
         for (var j = 0; j < timeChildren.length; j++) {
             if (timeChildren[j].nodeType === Node.TEXT_NODE && timeChildren[j].textContent.trim() !== '') {
-                timeLetter = timeChildren[j].textContent.trim();
-                console.log(timeLetter);
+                timePeriod = timeChildren[j].textContent.trim();
+                console.log(timePeriod);
             }
         }
 
-        
+        if (timePeriod == "T.B.A.") continue;
+
+        let dayArray = dayLetters.split("");
+        let timeArray = convertToMilitaryTime(timePeriod).split("-");
+
+        var isConflict;
+
+        let allSections = courses[i].getElementsByClassName('row susbSessionItem');
+        // let lectureButtons = courses[i].getElementsByClassName('col-lg-3 col-md-3 col-sm-3 col-xs-12');
+
+        function changeBackground(conflict) {
+            if (conflict) {
+                // lectureInfo[0].style.backgroundColor = "orange";
+                // lectureButtons[0].style.backgroundColor = "orange";
+
+                courses[i].style.backgroundColor = 'orange';
+
+                for (var j = 0; j < allSections.length; j++) {
+                    allSections[j].style.backgroundColor = 'orange';
+                }
+            }
+        }
 
         loadSchedule().then(schedule => {
-            const newEntry = {"day": "M", "start": "16:00", "end": "18:00"};
-            const isConflict = isTimeOverlapping(newEntry, schedule[newEntry.day]);
-            console.log(isConflict);
+            for (var j = 0; j < dayArray.length; j++) {
+                const newEntry = {"day": dayArray[j], "start": timeArray[0], "end": timeArray[1]};
+                isConflict = isTimeOverlapping(newEntry, schedule[newEntry.day]);
+                console.log("conflict: " + isConflict);
+
+                changeBackground(isConflict);
+                if (isConflict) break;
+            }
         });
     }
 }

@@ -9,11 +9,12 @@
     },
     "permissions": [
       "activeTab",
-      "scripting"
+      "scripting",
+      "storage"
     ],
     "web_accessible_resources": [
       {
-        "resources": ["json/schedule.json"],
+        "resources": ["/json/schedule.json"],
         "matches": ["<all_urls>"]
       }
     ],
